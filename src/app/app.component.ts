@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 
 import { Post } from "./post.model"
 import { PostsService } from './posts-service.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +12,7 @@ import { PostsService } from './posts-service.service';
 export class AppComponent implements OnInit {
   loadedPosts = [];
   isFetching = false;
+  error: HttpErrorResponse = null;
 
   constructor(
     private postsService: PostsService) {}
@@ -23,9 +23,13 @@ export class AppComponent implements OnInit {
 
   loadPosts() {
     this.isFetching = true;
-    this.postsService.fetchPosts().subscribe(posts => {
+    this.postsService.fetchPosts().subscribe(
+      posts => {
       this.loadedPosts = posts
       this.isFetching = false;
+    }, error => {
+      console.log(error)
+      this.error = error;
     })
   }
 
