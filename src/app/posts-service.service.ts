@@ -38,4 +38,9 @@ export class PostsService{
       })
     )
   }
+
+  deletePost() {
+    return this.http
+    .delete('https://ng-course-backend-85a2d.firebaseio.com/posts.json')
+  }
 }
