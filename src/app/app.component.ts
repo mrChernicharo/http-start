@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 import { Post } from "./post.model"
+import { PostsService } from './posts-service.service';
 
 @Component({
   selector: 'app-root',
@@ -13,47 +14,28 @@ export class AppComponent implements OnInit {
   loadedPosts = [];
   isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private postsService: PostsService) {}
 
   ngOnInit() {
-    this.fetchPosts();
+    this.loadPosts()
   }
 
-  private fetchPosts() {
+  loadPosts() {
     this.isFetching = true;
-    this.http
-      .get<{ [key: string]: Post }>('https://ng-course-backend-85a2d.firebaseio.com/posts.json')
-      .pipe(map(response => {
-        const postsArray: Post[] = [];
-        for (const key in response) {
-          if (response.hasOwnProperty(key)) {
-            postsArray.push({...response[key], id: key})
-          }
-        }
-        return postsArray;
-      })
-    )
-    .subscribe(response => {
-      console.log(response)
-      // setTimeout(() => {
-
-        this.loadedPosts = response
-        this.isFetching = false;
-      // }, 2000);
+    this.postsService.fetchPosts().subscribe(posts => {
+      this.loadedPosts = posts
+      this.isFetching = false;
     })
   }
 
   onCreatePost(postData: Post) {
-    console.log(postData)
-    this.http
-      .post<{ name: string }>(
-      'https://ng-course-backend-85a2d.firebaseio.com/posts.json',
-      postData)
-      .subscribe(response => console.log(response))
+    this.postsService.createAndStorePost(postData.title, postData.content)
+    setTimeout(() => this.loadPosts(), 3000);
   }
 
   onFetchPosts() {
-    this.fetchPosts();
+    this.loadPosts()
   }
 
   onClearPosts() {
