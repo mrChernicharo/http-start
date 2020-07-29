@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 import { Post } from './post.model';
-import { Subject } from 'rxjs';
+import { Subject, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService{
   error = new Subject<HttpErrorResponse>();
+
 
   constructor(
     private http: HttpClient
@@ -39,7 +40,9 @@ export class PostsService{
           }
         }
         return postsArray;
-      })
+      }, catchError(error => {
+        return throwError(error);
+      }))
     )
   }
 
