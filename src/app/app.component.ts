@@ -11,6 +11,7 @@ import { Post } from "./post.model"
 })
 export class AppComponent implements OnInit {
   loadedPosts = [];
+  isFetching = false;
 
   constructor(private http: HttpClient) {}
 
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPosts() {
+    this.isFetching = true;
     this.http
       .get<{ [key: string]: Post }>('https://ng-course-backend-85a2d.firebaseio.com/posts.json')
       .pipe(map(response => {
@@ -31,7 +33,14 @@ export class AppComponent implements OnInit {
         return postsArray;
       })
     )
-    .subscribe(response => console.log(response))
+    .subscribe(response => {
+      console.log(response)
+      // setTimeout(() => {
+
+        this.loadedPosts = response
+        this.isFetching = false;
+      // }, 2000);
+    })
   }
 
   onCreatePost(postData: Post) {
