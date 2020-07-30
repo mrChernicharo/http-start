@@ -40,9 +40,9 @@ export class PostsService{
         {
           headers: new HttpHeaders({'custom-header': 'hello'}),
           // params: new HttpParams().set('print', 'pretty')
-          params: searchParams,
-          observe: "response", // body, response, events
-          responseType: "json",
+          // params: searchParams,
+          // observe: "response", // body, response, events
+          // responseType: "json",
         })
       .pipe(map(response => {
         const postsArray: Post[] = [];
