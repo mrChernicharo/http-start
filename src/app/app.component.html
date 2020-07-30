@@ -63,6 +63,7 @@
         <h4>{{ error.statusText }}</h4>
         <span>{{ error.name }}: <strong> {{ error.status }}</strong></span>
         <p>{{ error.message }}</p>
+        <button type="button" (click)="onHandleError()">Okay</button>
       </div>
     </div>
   </div>
