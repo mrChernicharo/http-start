@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 
 import { Post } from './post.model';
@@ -17,12 +17,21 @@ export class PostsService{
   ) { }
 
   createAndStorePost(title: string, content: string) {
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('print', 'pretty');
+    searchParams = searchParams.append('custom', 'true');
+
     const postData: Post = { title, content };
     this.http
       .post<{ name: string }>(
-      'https://ng-course-backend-85a2d.firebaseio.com/posts.json',
-      postData)
-      .subscribe(responseData => {
+        'https://ng-course-backend-85a2d.firebaseio.com/posts.json',
+        postData,
+        {
+          headers: new HttpHeaders({'custom-header': 'hello'}),
+          // params: new HttpParams().set('print', 'pretty')
+          params: searchParams
+        }
+      ).subscribe(responseData => {
         console.log(responseData);
       }, error => {
         this.error.next(error);
