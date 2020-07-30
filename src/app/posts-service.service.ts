@@ -17,20 +17,11 @@ export class PostsService{
   ) { }
 
   createAndStorePost(title: string, content: string) {
-    let searchParams = new HttpParams();
-    searchParams = searchParams.append('print', 'pretty');
-    searchParams = searchParams.append('custom', 'true');
-
     const postData: Post = { title, content };
     this.http
       .post<{ name: string }>(
         'https://ng-course-backend-85a2d.firebaseio.com/posts.json',
-        postData,
-        {
-          headers: new HttpHeaders({'custom-header': 'hello'}),
-          // params: new HttpParams().set('print', 'pretty')
-          params: searchParams
-        }
+        postData
       ).subscribe(responseData => {
         console.log(responseData);
       }, error => {
@@ -39,8 +30,20 @@ export class PostsService{
   }
 
   fetchPosts() {
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('print', 'pretty');
+    searchParams = searchParams.append('custom', 'true');
+
     return this.http
-      .get<{ [key: string]: Post }>('https://ng-course-backend-85a2d.firebaseio.com/posts.json')
+      .get<{ [key: string]: Post }>(
+        'https://ng-course-backend-85a2d.firebaseio.com/posts.json',
+        {
+          headers: new HttpHeaders({'custom-header': 'hello'}),
+          // params: new HttpParams().set('print', 'pretty')
+          params: searchParams,
+          observe: "response", // body, response, events
+          responseType: "json",
+        })
       .pipe(map(response => {
         const postsArray: Post[] = [];
         for (const key in response) {
